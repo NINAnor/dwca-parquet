@@ -1,0 +1,6 @@
+_build/
+__pycache__/
+.vscode
+.git
+.pre-commit-config.yaml
+.venv

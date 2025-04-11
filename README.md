@@ -37,6 +37,11 @@ uv add requests
 #### Visual studio code
 If you are using visual studio code install the recommended extensions
 
+### Development with docker
+A basic docker image is already provided, run:
+```bash
+docker compose watch
+```
 
 ### Tools installed
 - uv

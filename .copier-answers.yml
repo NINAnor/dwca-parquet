@@ -4,7 +4,7 @@ _src_path: gh://ninanor/python-template
 author_name: ninanor
 debug: false
 default_branch_name: main
-docker: false
+docker: true
 email: niccolo.cantu@nina.no
 notebook: false
 project_name: DWCA-parquet-api
