@@ -1,14 +1,15 @@
-from fastapi import FastAPI
-from pydantic_settings import BaseSettings
+import logging
+import pathlib
+import re
+
 import duckdb
 import fsspec
-import pathlib
 import xmltodict
-import re
 from bs4 import BeautifulSoup
-from fastapi.templating import Jinja2Templates
+from fastapi import FastAPI
 from fastapi.responses import FileResponse
-import logging
+from fastapi.templating import Jinja2Templates
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):

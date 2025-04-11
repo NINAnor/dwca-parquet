@@ -1,24 +1,30 @@
+[dependency-groups]
+dev = ["deptry", "pre-commit"]
+
 [project]
-name = "dwca-parquet"
-version = "0.1.0"
-description = "Add your description here"
-readme = "README.md"
-authors = [{ name = "Niccolo Cantu", email = "niccolo.cantu@nina.no" }]
-requires-python = ">=3.11"
+authors = [{ name = "ninanor", email = "niccolo.cantu@nina.no" }]
+# PEP 621 project metadata
+# See https://www.python.org/dev/peps/pep-0621/
 dependencies = [
-    "beautifulsoup4>=4.13.3",
-    "duckdb==1.2.1",
-    "fastapi[standard]>=0.115.12",
-    "fsspec>=2025.3.2",
-    "jinja2>=3.1.6",
-    "lxml>=5.3.2",
-    "pydantic-settings>=2.8.1",
-    "xmltodict>=0.14.2",
+  "beautifulsoup4>=4.13.3",
+  "duckdb==1.2.1",
+  "fastapi[standard]>=0.115.12",
+  "fsspec>=2025.3.2",
+  "jinja2>=3.1.6",
+  "lxml>=5.3.2",
+  "pydantic-settings>=2.8.1",
+  "xmltodict>=0.14.2",
 ]
+description = ""
+license = { text = "GPL-3.0+" }
+name = "dwca_parquet"
+readme = "README.md"
+requires-python = ">=3.10"
+version = "0.1.0"
 
-[project.scripts]
-dwca-parquet = "dwca_parquet:main"
+[tool.ruff]
+fix = true
 
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+[tool.ruff.lint]
+ignore = ["COM812"]
+select = ["E", "W", "I", "F", "UP", "S", "B", "A", "COM", "LOG", "PTH", "Q"]
