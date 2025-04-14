@@ -42,6 +42,20 @@ def get_resource(resource_id: str, fs: LocalFsDep, settings: SettingsDep):
     return response
 
 
+@router.get("/resources/{resource_id}/latest.parquet")
+def get_resource_as_latest_parquet(
+    resource_id: str,
+    settings: SettingsDep,
+    fs: LocalFsDep,
+):
+    resource = fs.open(
+        pathlib.Path(settings.resource_folder) / resource_id / "resource.xml"
+    )
+    meta = xmltodict.parse(resource)
+    version_id = meta["resource"]["versionHistory"]["versionhistory"][0]["version"]
+    return RedirectResponse(f"v{version_id}.parquet")
+
+
 @router.get("/resources/{resource_id}/v{version_id}.parquet")
 def get_resource_as_parquet(
     resource_id: str,
