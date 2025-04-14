@@ -15,5 +15,7 @@ ADD . /app
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --frozen
 
+RUN uv run dwca-setup
+
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["uv", "run", "uvicorn", "dwca_parquet.main:app"]
