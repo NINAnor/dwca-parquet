@@ -330,7 +330,7 @@ wheels = [
 [[package]]
 name = "dwca-parquet"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "beautifulsoup4" },
     { name = "duckdb" },
