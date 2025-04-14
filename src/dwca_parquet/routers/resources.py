@@ -57,11 +57,16 @@ def get_resource(
     )
 
     meta = xmltodict.parse(resource)
+    print(meta)
 
-    for version in meta["resource"]["versionHistory"]["versionhistory"]:
-        response["versions"].append(
-            {"id": version["version"], "date": version["released"]}
-        )
+    try:
+        for version in meta["resource"]["versionHistory"]["versionhistory"]:
+            response["versions"].append(
+                {"id": version["version"], "date": version["released"]}
+            )
+    except Exception as e:
+        logging.error(e)
+
     response["version"] = meta["resource"]["emlVersion"]
 
     metadata = fs.open(pathlib.Path(settings.resource_folder) / resource_id / "eml.xml")
