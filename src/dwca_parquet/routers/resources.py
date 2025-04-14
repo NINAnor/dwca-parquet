@@ -1,11 +1,10 @@
-import logging
 import pathlib
 
 import xmltodict
 from fastapi import APIRouter
-from fastapi.responses import FileResponse
+from fastapi.responses import RedirectResponse
 
-from ..dependencies import DBDep, LocalFsDep, SettingsDep, TemplatesDep
+from ..dependencies import DBDep, LocalFsDep, S3FsDep, SettingsDep, TemplatesDep
 from ..libs.dwca import get_context_from_metafile
 
 router = APIRouter()
@@ -43,13 +42,14 @@ def get_resource(resource_id: str, fs: LocalFsDep, settings: SettingsDep):
     return response
 
 
-@router.get("/resources/{resource_id}/{version_id}.parquet")
+@router.get("/resources/{resource_id}/v{version_id}.parquet")
 def get_resource_as_parquet(
     resource_id: str,
     version_id: str,
     settings: SettingsDep,
     conn: DBDep,
     templates: TemplatesDep,
+    s3fs: S3FsDep,
 ):
     destination_path = (
         pathlib.Path(settings.resource_folder)
@@ -57,7 +57,9 @@ def get_resource_as_parquet(
         / f"dwca-v{version_id}.parquet"
     )
 
-    if not destination_path.exists():
+    s3_path = f"s3://{settings.s3_bucket}{settings.s3_prefix}{destination_path}"
+
+    if not s3fs.exists(s3_path):
         resource_path = (
             pathlib.Path(settings.resource_folder)
             / resource_id
@@ -73,17 +75,8 @@ def get_resource_as_parquet(
 
         ctx = get_context_from_metafile(resource_path=resource_path)
 
-        params = {
-            **ctx,
-            "destination": destination_path,
-        }
+        query = templates.get_template("query.sql").render(**ctx, trim_blocks=True)
+        cursor.sql(query).write_parquet(s3_path)
 
-        query = templates.get_template("query.sql").render(**params, trim_blocks=True)
-        logging.debug(query)
-        cursor.execute(query)
-
-    return FileResponse(
-        destination_path,
-        media_type="application/vnd.apache.parquet",
-        filename=f"{resource_id}-v{version_id}.parquet",
-    )
+    public_url = f"{settings.aws_endpoint_url}/{settings.s3_bucket}{settings.s3_prefix}{destination_path}"
+    return RedirectResponse(public_url)

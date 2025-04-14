@@ -339,6 +339,7 @@ dependencies = [
     { name = "jinja2" },
     { name = "lxml" },
     { name = "pydantic-settings" },
+    { name = "python-dotenv" },
     { name = "s3fs" },
     { name = "xmltodict" },
 ]
@@ -358,6 +359,7 @@ requires-dist = [
     { name = "jinja2", specifier = ">=3.1.6" },
     { name = "lxml", specifier = ">=5.3.2" },
     { name = "pydantic-settings", specifier = ">=2.8.1" },
+    { name = "python-dotenv", specifier = ">=1.1.0" },
     { name = "s3fs", specifier = ">=2025.3.2" },
     { name = "xmltodict", specifier = ">=0.14.2" },
 ]
