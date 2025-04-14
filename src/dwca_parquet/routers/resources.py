@@ -1,3 +1,4 @@
+import logging
 import pathlib
 
 import xmltodict
@@ -23,15 +24,20 @@ def get_resources(settings: SettingsDep, fs: LocalFsDep, request: Request):
     response = {"resources": []}
     for e in result:
         resource_id = pathlib.Path(e["name"]).name
-        meta = fs.open(pathlib.Path(settings.resource_folder) / resource_id / "eml.xml")
-        soup = BeautifulSoup(meta, features="lxml-xml")
-        response["resources"].append(
-            {
-                "id": resource_id,
-                "title": soup.find("title").text,
-                "url": f"{request.url}{resource_id}/",
-            }
-        )
+        try:
+            meta = fs.open(
+                pathlib.Path(settings.resource_folder) / resource_id / "eml.xml"
+            )
+            soup = BeautifulSoup(meta, features="lxml-xml")
+            response["resources"].append(
+                {
+                    "id": resource_id,
+                    "title": soup.find("title").text,
+                    "url": f"{request.url}{resource_id}/",
+                }
+            )
+        except FileNotFoundError:
+            logging.warning(f"eml.xml not found for resource {resource_id}")
 
     return response
 
