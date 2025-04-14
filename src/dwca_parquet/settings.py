@@ -38,6 +38,7 @@ def duckdb_install_extensions():
         conn.execute("""
         INSTALL zipfs FROM community;
         INSTALL spatial;
+        INSTALL httpfs;
     """).fetchall(),
     )
 
