@@ -87,7 +87,7 @@ def get_resource(
 
     if not s3fs.exists(s3_path):
         version_to_parquet(
-            conn=conn, source_path=base_path + ".zip", destination=s3_path
+            conn=conn, source_path=str(base_path) + ".zip", destination=s3_path
         )
 
     response["parquet_url"] = (
@@ -126,7 +126,7 @@ def get_resource_as_latest_parquet(
 
     if not s3fs.exists(s3_path):
         version_to_parquet(
-            conn=conn, source_path=base_path + ".zip", destination=s3_path
+            conn=conn, source_path=str(base_path) + ".zip", destination=s3_path
         )
 
     return RedirectResponse(
@@ -150,7 +150,7 @@ def get_resource_as_parquet(
 
     if not s3fs.exists(s3_path):
         version_to_parquet(
-            conn=conn, source_path=base_path + ".zip", destination=s3_path
+            conn=conn, source_path=str(base_path) + ".zip", destination=s3_path
         )
 
     return RedirectResponse(
