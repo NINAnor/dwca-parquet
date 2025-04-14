@@ -8,6 +8,7 @@ from s3fs import S3FileSystem
 
 
 class Settings(BaseSettings):
+    ipt_public: str
     resource_folder: str = "resources"
     connection: str = ":memory:"
     s3_prefix: str = "/"
