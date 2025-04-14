@@ -14,7 +14,9 @@ jobs:
       matrix:
         include:
           - context: .
-            image: ghcr.io/ninanor/dwca-parquet/api
+            image: ghcr.io/ninanor/ipt-api/backend
+          - context: ./nginx
+            image: ghcr.io/ninanor/ipt-api/proxy
 
     permissions:
       contents: read
