@@ -64,7 +64,7 @@ def duckdb_load_s3_credentials():
             REGION 'eu-west-1',
             KEY_ID '{settings.aws_access_key}',
             SECRET '{settings.aws_secret_key}',
-            ENDPOINT '{settings.aws_endpoint_url.replace(r'https://', '')}',
+            ENDPOINT '{settings.aws_endpoint_url.replace(r"https://", "")}',
             URL_STYLE '{settings.s3_url_style}'
         );
     """).fetchall(),
