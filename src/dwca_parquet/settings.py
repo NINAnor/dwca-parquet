@@ -9,7 +9,7 @@ from s3fs import S3FileSystem
 
 class Settings(BaseSettings):
     ipt_public: str
-    resource_folder: str = "resources"
+    cache_path: str = ".zip_cache/"
     connection: str = ":memory:"
     s3_prefix: str = "/"
     s3_url_style: str = "path"
