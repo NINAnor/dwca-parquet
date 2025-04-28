@@ -1,3 +1,4 @@
+import logging
 import pathlib
 
 import duckdb
@@ -9,7 +10,7 @@ from s3fs import S3FileSystem
 
 class Settings(BaseSettings):
     ipt_public: str
-    cache_path: str = ".zip_cache/"
+    cache_path: str = ".dwca_cache/"
     connection: str = ":memory:"
     s3_prefix: str = "/"
     s3_url_style: str = "path"
@@ -32,8 +33,13 @@ s3fs = S3FileSystem(endpoint_url=settings.aws_endpoint_url, anon=True)
 conn = duckdb.connect(settings.connection)
 
 
+if not pathlib.Path(settings.cache_path).exists():
+    logging.info("cache folder not found, try creating it")
+    pathlib.Path(settings.cache_path).mkdir(parents=True)
+
+
 def duckdb_install_extensions():
-    print(
+    logging.info(
         "install extensions",
         conn.execute("""
         INSTALL zipfs FROM community;
@@ -44,7 +50,7 @@ def duckdb_install_extensions():
 
 
 def duckdb_load_extensions():
-    print(
+    logging.info(
         "load extensions",
         conn.execute("""
         LOAD zipfs;
@@ -55,7 +61,7 @@ def duckdb_load_extensions():
 
 
 def duckdb_load_s3_credentials():
-    print(
+    logging.info(
         "load secrets",
         conn.execute(f"""
         CREATE OR REPLACE SECRET secret (

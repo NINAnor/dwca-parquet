@@ -9,6 +9,6 @@ duckdb_load_extensions()
 duckdb_load_s3_credentials()
 logging.info(settings)
 
-app = FastAPI()
+app = FastAPI(root_path="/api/v1")
 
-app.include_router(resources.router, prefix="/api")
+app.include_router(resources.router)
