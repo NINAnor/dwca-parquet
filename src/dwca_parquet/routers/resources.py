@@ -41,7 +41,7 @@ async def get_resources(settings: SettingsDep, fs: LocalFsDep, request: Request)
                         "version": content["guid"]["#text"]
                         .split("/")[1]
                         .replace("v", ""),
-                        "url": f"{request.base_url}api/resources/{resource_id}",
+                        "url": f"{request.base_url}/resources/{resource_id}",
                     }
                 )
 
@@ -70,9 +70,6 @@ async def get_resource(
         response["meta"] = xmltodict.parse(text)
         response["version"] = (
             response["meta"]["eml:eml"]["@packageId"].split("/")[1].replace("v", "")
-        )
-        response["ipt_dwca"] = (
-            f"{request.base_url}api/resources/{resource_id}/v{response['version']}.zip"
         )
 
     # parquet handling
