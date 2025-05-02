@@ -52,7 +52,6 @@ async def get_resources(settings: SettingsDep, fs: LocalFsDep, request: Request)
 async def get_resource(
     resource_id: str,
     settings: SettingsDep,
-    request: Request,
     conn: DBDep,
     s3fs: S3FsDep,
     background_tasks: BackgroundTasks,
@@ -73,12 +72,10 @@ async def get_resource(
         )
 
     # parquet handling
-    base_path = f"{resource_id}-v{response['version']}"
-
-    s3_path = f"s3://{settings.s3_bucket}{settings.s3_prefix}{base_path}.parquet"
+    s3_path = f"s3://{settings.s3_bucket}{settings.s3_prefix}{resource_id}.parquet"
 
     response["parquet_url"] = (
-        f"{settings.aws_endpoint_url}/{settings.s3_bucket}{settings.s3_prefix}{base_path}.parquet"  # noqa: E501
+        f"{settings.aws_endpoint_url}/{settings.s3_bucket}{settings.s3_prefix}{resource_id}.parquet"  # noqa: E501
     )
     response["s3_path"] = (
         s3_path
@@ -94,11 +91,17 @@ async def get_resource(
 
 def version_to_parquet(conn, settings, s3fs, resource_id: str, version_id: str):
     logging.info(f"starting {resource_id}@{version_id}")
-    base_path = f"{resource_id}-v{version_id}"
+    base_path_versioned = f"{resource_id}/v{version_id}"
 
-    s3_path = f"s3://{settings.s3_bucket}{settings.s3_prefix}{base_path}.parquet"
+    s3_path = (
+        f"s3://{settings.s3_bucket}{settings.s3_prefix}{base_path_versioned}.parquet"
+    )
+    s3_path_latest = (
+        f"s3://{settings.s3_bucket}{settings.s3_prefix}{resource_id}.parquet"
+    )
     cache = pathlib.Path(settings.cache_path) / f"{resource_id}-v{version_id}.zip"
 
+    # Check that the version exists, otherwise create it and overwrite the latest one
     if not s3fs.exists(s3_path):
         try:
             # create a temporary cache to allow duckdb to read it
@@ -115,6 +118,9 @@ def version_to_parquet(conn, settings, s3fs, resource_id: str, version_id: str):
             query = templates.get_template("query.sql").render(**ctx, trim_blocks=True)
             logging.info("write to parquet")
             cursor.sql(query).write_parquet(s3_path, compression="zstd", overwrite=True)
+            cursor.sql(query).write_parquet(
+                s3_path_latest, compression="zstd", overwrite=True
+            )
         finally:
             logging.info("done")
             cache.unlink(missing_ok=True)
