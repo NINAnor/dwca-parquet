@@ -9,6 +9,7 @@ from ..dependencies import (
     SettingsDep,
 )
 from ..libs.csw import eml_to_records
+from ..libs.geoapi import ipt_to_pygeoapi_resources
 from ..libs.ipt import get_dataset_metadata, get_datasets
 from ..libs.parquet import version_to_parquet
 
@@ -30,6 +31,14 @@ async def generate_csw(q: QueueDep, settings: SettingsDep):
     q.enqueue(eml_to_records)
     return {
         "result": f"{settings.aws_endpoint_url}/{settings.s3_bucket}{settings.csw_path}"
+    }
+
+
+@router.post("/resources/geoapi")
+async def generate_geoapi(q: QueueDep, settings: SettingsDep):
+    q.enqueue(ipt_to_pygeoapi_resources)
+    return {
+        "result": f"{settings.aws_endpoint_url}/{settings.s3_bucket}{settings.geoapi_path}"  # noqa: E501
     }
 
 

@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     cache_path: str = ".dwca_cache/"
     connection: str = ":memory:"
     resources_prefix: str = "/ipt/datasets/"
+    geoapi_path: str = "/geoapi/ipt-resources.parquet"
     csw_path: str = "/csw/ipt-metadata.parquet"
     s3_url_style: str = "path"
     s3_bucket: str
