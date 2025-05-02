@@ -49,10 +49,12 @@ async def get_resource(resource_id: str, settings: SettingsDep, q: QueueDep):
     )
 
     # parquet handling
-    s3_path = f"s3://{settings.s3_bucket}{settings.s3_prefix}{resource_id}.parquet"
+    s3_path = (
+        f"s3://{settings.s3_bucket}{settings.resources_prefix}{resource_id}.parquet"
+    )
 
     response["parquet_url"] = (
-        f"{settings.aws_endpoint_url}/{settings.s3_bucket}{settings.s3_prefix}{resource_id}.parquet"  # noqa: E501
+        f"{settings.aws_endpoint_url}/{settings.s3_bucket}{settings.resources_prefix}{resource_id}.parquet"  # noqa: E501
     )
     response["s3_path"] = (
         s3_path
