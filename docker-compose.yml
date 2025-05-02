@@ -1,20 +1,30 @@
+x-app: &app
+  build:
+    context: .
+  environment:
+    DEBUG: True
+    REDIS_URL: redis://redis
+  develop:
+    watch:
+      # Sync the working directory with the `/app` directory in the container
+      - action: rebuild
+        path: .
+        target: /app
+        ignore:
+          - .venv/
+      - action: rebuild
+        path: ./pyproject.toml
+
 services:
   app:
-    build:
-      context: .
-    environment:
-      DEBUG: True
+    <<: *app
     ports:
       - 8000:8000
-    command: uv run fastapi dev src/dwca_parquet/main.py
-    #command: uv run pdb -c continue main.py
-    develop:
-      watch:
-        # Sync the working directory with the `/app` directory in the container
-        - action: sync
-          path: .
-          target: /app
-          ignore:
-            - .venv/
-        - action: rebuild
-          path: ./pyproject.toml
+    command: uv run fastapi dev src/dwca_parquet/main.py --host 0.0.0.0
+
+  queue:
+    <<: *app
+    command: uv run rq worker --with-scheduler
+
+  redis:
+    image: redis
