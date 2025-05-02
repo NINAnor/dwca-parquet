@@ -1,3 +1,4 @@
+import json
 import logging
 
 import pyarrow as pa
@@ -58,6 +59,21 @@ def eml_to_records():
         for _k, v in idf["keywords"].items():
             keywords += v["keywords"]
 
+        links = [
+            {
+                "name": "Parquet",
+                "description": "The resource as (geo)parquet file",
+                "protocol": "FILE:GEO",
+                "url": f"{settings.aws_endpoint_url}/{settings.s3_bucket}{settings.resources_prefix}{ds['id']}.parquet",  # noqa: E501
+            },
+            {
+                "name": "DWCA",
+                "description": "The resource as Darwin Core Archive",
+                "protocol": "file",
+                "url": f"{settings.ipt_public}/archive.do?r={ds['id']}",  # noqa: E501
+            },
+        ]
+
         rows.append(
             {
                 "identifier": metadata["metadata"]["identifier"],
@@ -80,6 +96,7 @@ def eml_to_records():
                 "creator": "Norsk institutt for naturforskning (NINA)",
                 "publisher": "Norsk institutt for naturforskning (NINA)",
                 "contributor": "; ".join(set(contribs)),
+                "links": json.dumps(links),
             }
         )
 
