@@ -66,8 +66,6 @@ def ipt_to_pygeoapi_resources():
     duckdb_load_extensions(conn)
     duckdb_load_s3_credentials(conn)
     logger.info("write to S3")
-    conn.sql("from records").write_parquet(
-        f"s3://{settings.s3_bucket}{settings.geoapi_path}",
-        compression="zstd",
-        overwrite=True,
-    )
+    conn.sql(f"""
+        COPY records to 's3://{settings.s3_bucket}{settings.geoapi_path}' (FORMAT json, ARRAY true)
+    """)  # noqa: E501
