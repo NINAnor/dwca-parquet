@@ -39,7 +39,7 @@ def ipt_to_pygeoapi_resources():
 
         rows.append(
             {
-                "id": metadata["metadata"]["identifier"],
+                "id": f"{settings.ipt_public.replace('https://', '')}/{ds['id']}",
                 "type": "collection",
                 "visibility": "default",
                 "title": ds["title"],
@@ -49,12 +49,16 @@ def ipt_to_pygeoapi_resources():
                 "providers": [
                     {
                         "type": "feature",
-                        "name": "Parquet",
+                        "name": "OGR",
                         "default": True,
                         "id_field": "fid",
                         "editable": False,
-                        "storage_crs": "http://www.opengis.net/def/crs/EPSG/0/4326",
-                        "data": f"{settings.aws_endpoint_url}/{settings.s3_bucket}{settings.resources_prefix}{ds['id']}.parquet",  # noqa: E501
+                        "storage_crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+                        "data": {
+                            "source_type": "Parquet",
+                            "source": f"/vsicurl/{settings.aws_endpoint_url}/{settings.s3_bucket}{settings.resources_prefix}{ds['id']}.parquet",  # noqa: E501
+                        },
+                        "layer": ds["id"],
                     }
                 ],
             }
