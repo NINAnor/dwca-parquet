@@ -20,7 +20,7 @@ router = APIRouter()
 async def get_resources(settings: SettingsDep, fs: LocalFsDep, request: Request):
     response = {"resources": []}
 
-    async for resource in get_datasets(request.base_url, settings.ipt_public):
+    for resource in get_datasets(request.base_url, settings.ipt_public):
         response["resources"].append(resource)
 
     return response
